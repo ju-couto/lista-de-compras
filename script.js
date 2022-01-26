@@ -3,24 +3,26 @@ let inputItem = document.getElementById('text-item');
 let btn= document.getElementById('btn-add')
 let btnDelAll = document.getElementById('btn-delAll')
 let arr = []
-function createItem(item,nome,email){
+
+function createItem(item){
     return{
         id: arr.length,
         item,
-        nome,
-        email,
         btnDel: document.createElement("button"),
         btnEdit: document.createElement("button")
     }
 }
-function add(){
+async function add(){
     if(inputItem.value){
         let item = document.createElement('li')
         item.setAttribute('class',"list-group-item d-flex gap-3 lh-md align-center text-break")
         lista.appendChild(item)
         let itemTxt = inputItem.value
-        arr.push(createItem(itemTxt,'nome',"email"))
+        arr.push(createItem(itemTxt))
         let i = arr.length - 1
+        let user= await pullAPI()
+        arr[i].name= user.name.first
+        arr[i].email= user.email
         item.id = i
         item.appendChild(arr[i].btnDel)
         arr[i].btnDel.setAttribute("class","badge rounded-pill btn-danger")
@@ -30,8 +32,7 @@ function add(){
         arr[i].btnEdit.innerHTML = "edit"
         arr[i].btnEdit.addEventListener('click', edit)
         arr[i].btnDel.innerHTML ="X"
-        let user= arr[i].nome + " " + arr[i].email
-        item.append(arr[i].item + " "+user) 
+        item.append(arr[i].item + " - "+arr[i].name+' '+arr[i].email) 
         inputItem.value = ""
         
     }else{
@@ -42,7 +43,6 @@ function add(){
 function del(){
     let item = this.parentNode
     arr.pop(arr.find(e => e.id == item.id))
-    console.log(arr)
     item.parentNode.removeChild(item)
 }
 function delAll(){
@@ -60,17 +60,29 @@ function edit(){
     inputItem.focus()
 }
 function save(){
-    let item= document.querySelector('[edited=true]')
-    let i=item.id
-    arr[i].item = inputItem.value
-    let user= arr[i].nome + " "+ arr[i].email
-    item.removeAttribute('edited')
-    item.lastChild.textContent = arr[i].item +" "+user
-    btn.setAttribute("class","btn-sm  btn-primary  mx-0 ")
-    btn.value="add"
-    btn.removeEventListener('click',save)
-    btn.addEventListener('click',add)
+    if(inputItem.value){
+        let item= document.querySelector('[edited=true]')
+        let i=item.id
+        arr[i].item = inputItem.value
+        item.removeAttribute('edited')
+        item.lastChild.textContent = arr[i].item +" - "+ arr[i].name + " "+ arr[i].email
+        btn.setAttribute("class","btn-sm  btn-primary  mx-0 ")
+        btn.value="add"
+        btn.removeEventListener('click',save)
+        btn.addEventListener('click',add)
+        inputItem.value= ""
+    } else{
+        alert("Insira um valor válido")
+        inputItem.focus()
+    }
 }
+
+async function pullAPI(){
+    const users = await fetch('https://randomuser.me/api/')
+    const usersJson = await users.json()
+    return usersJson.results[0]
+}
+
 function pressEnter(e){
     if(e.key==='Enter'){
         if(btn.value =="add"){
