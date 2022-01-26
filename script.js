@@ -26,10 +26,10 @@ async function add(){
             arr[i].email= user.email
             item.id = i
             item.appendChild(arr[i].btnDel)
-            arr[i].btnDel.setAttribute("class","badge rounded-pill btn-danger")
+            arr[i].btnDel.setAttribute("class","btn  btn-danger btn-sm badge")
             arr[i].btnDel.addEventListener('click', del)
             item.appendChild(arr[i].btnEdit)
-            arr[i].btnEdit.setAttribute("class","badge rounded-pill btn btn-success")
+            arr[i].btnEdit.setAttribute("class"," btn btn-success btn-sm badge")
             arr[i].btnEdit.innerHTML = "edit"
             arr[i].btnEdit.addEventListener('click', edit)
             arr[i].btnDel.innerHTML ="X"
