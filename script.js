@@ -14,27 +14,30 @@ function createItem(item){
 }
 async function add(){
     if(inputItem.value){
-        let item = document.createElement('li')
-        item.setAttribute('class',"list-group-item d-flex gap-3 lh-md align-center text-break")
-        lista.appendChild(item)
-        let itemTxt = inputItem.value
-        arr.push(createItem(itemTxt))
-        let i = arr.length - 1
         let user= await pullAPI()
-        arr[i].name= user.name.first
-        arr[i].email= user.email
-        item.id = i
-        item.appendChild(arr[i].btnDel)
-        arr[i].btnDel.setAttribute("class","badge rounded-pill btn-danger")
-        arr[i].btnDel.addEventListener('click', del)
-        item.appendChild(arr[i].btnEdit)
-        arr[i].btnEdit.setAttribute("class","badge rounded-pill btn btn-success")
-        arr[i].btnEdit.innerHTML = "edit"
-        arr[i].btnEdit.addEventListener('click', edit)
-        arr[i].btnDel.innerHTML ="X"
-        item.append(arr[i].item + " - "+arr[i].name+' '+arr[i].email) 
-        inputItem.value = ""
-        
+        if(user){
+            let item = document.createElement('li')
+            item.setAttribute('class',"list-group-item d-flex gap-3 lh-md align-center text-break")
+            lista.appendChild(item)
+            let itemTxt = inputItem.value
+            arr.push(createItem(itemTxt))
+            let i = arr.length - 1
+            arr[i].name= user.name.first
+            arr[i].email= user.email
+            item.id = i
+            item.appendChild(arr[i].btnDel)
+            arr[i].btnDel.setAttribute("class","badge rounded-pill btn-danger")
+            arr[i].btnDel.addEventListener('click', del)
+            item.appendChild(arr[i].btnEdit)
+            arr[i].btnEdit.setAttribute("class","badge rounded-pill btn btn-success")
+            arr[i].btnEdit.innerHTML = "edit"
+            arr[i].btnEdit.addEventListener('click', edit)
+            arr[i].btnDel.innerHTML ="X"
+            item.append(arr[i].item + " - "+arr[i].name+' '+arr[i].email) 
+            inputItem.value = ""
+        }else{
+            console.log("Erro")
+        }    
     }else{
         alert("Por favor insira um valor válido!")
         inputItem.focus()
@@ -78,9 +81,14 @@ function save(){
 }
 
 async function pullAPI(){
+   try{ 
     const users = await fetch('https://randomuser.me/api/')
     const usersJson = await users.json()
     return usersJson.results[0]
+   } catch(e){
+       alert("Erro! Entre em contato com o suporte!")
+
+   }
 }
 
 function pressEnter(e){
